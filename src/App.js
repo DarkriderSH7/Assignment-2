@@ -52,7 +52,7 @@ function App() {
             removeFromCart={removeFromCart}
           />
         } />
-        {/* Add a new Route for the account page */}
+        {}
         <Route path="/account" element={
           <Account 
             user={user} 

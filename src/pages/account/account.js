@@ -20,18 +20,15 @@ export const Account = ({ user, updateUser }) => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Call a function to update the user details
-    // This function should be passed down as a prop or use a context/global state
     updateUser(formData);
     alert('Account details updated!');
   };
 
   return (
     <div>
-      <h2>{user ? 'Edit Your Account' : 'Create an Account'}</h2>
+      <h2>{user ? 'Edit Your Shipping Details' : 'Create an Account'}</h2>
       <form onSubmit={handleSubmit}>
         <label>
           Full Name:

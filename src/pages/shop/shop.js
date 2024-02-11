@@ -6,7 +6,8 @@ export const Shop = ({ addToCart }) => {
   return (
     <div className='shop'>
         <div className='shopTitle'>
-            <h1>Assignment1</h1>
+            <h1>Syed Suhaib Hussain - 8927037
+- Assignment1</h1>
         </div>
         <div className='products'>
         {PRODUCTS.map((product) => (
