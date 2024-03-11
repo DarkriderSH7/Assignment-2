@@ -1,33 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; 
+export const Cart = () => { 
+  const [cartItems, setCartItems] = useState([]);
+  const [purchaseFinalized, setPurchaseFinalized] = useState(false);
 
-export const Cart = ({ cart, setCart }) => {
-  
-  // Function to update the quantity of an item in the cart
+  useEffect(() => {
+    const userId = 1;
+
+    fetch(`http://localhost/api/fetch_cart.php?userId=${userId}`)
+      .then(response => response.json())
+      .then(data => {
+        setCartItems(data); 
+      })
+      .catch(error => console.error('Error fetching cart items:', error));
+  }, []);
+
   const updateQuantity = (product, newQuantity) => {
-    setCart(cart.map(item =>
+    setCartItems(cartItems.map(item =>
       item.id === product.id ? { ...item, quantity: newQuantity } : item
     ));
   };
 
-  // Function to remove an item from the cart
   const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId));
+    setCartItems(cartItems.filter(item => item.id !== productId));
   };
 
-  // State to handle purchase confirmation visibility
-  const [purchaseFinalized, setPurchaseFinalized] = useState(false);
-
-  // Function to handle finalizing the purchase
-  const finalizePurchase = () => {
-    // Display an alert to the user
-    alert('Your purchase has been finalized! Thank you for your order.');
-    // Set purchase as finalized
-    setPurchaseFinalized(true);
-    // Clear the cart
-    setCart([]);
-  };
-
-  // Function to calculate the total price
   const calculateTotal = (cartItems) => {
     return cartItems.reduce((total, item) => {
       const price = parseFloat(item.price.replace(/[^0-9.-]+/g, ""));
@@ -35,17 +31,22 @@ export const Cart = ({ cart, setCart }) => {
     }, 0);
   };
 
-  // Calculate the total price using the calculateTotal function
-  const totalPrice = calculateTotal(cart);
+  const finalizePurchase = () => {
+    alert('Your purchase has been finalized! Thank you for your order.');
+    setPurchaseFinalized(true);
+    setCartItems([]);
+  };
+
+  const totalPrice = calculateTotal(cartItems);
 
   return (
     <div>
       <h2>Your Cart</h2>
-      {cart.length === 0 ? (
+      {cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
         <div>
-          {cart.map((item, index) => (
+          {cartItems.map((item, index) => (
             <div key={index} className="cart-item">
               <img src={item.productimage} alt={item.productName} className="cart-item-image" />
               <div>
@@ -66,7 +67,6 @@ export const Cart = ({ cart, setCart }) => {
           <button onClick={finalizePurchase} disabled={purchaseFinalized}>
             {purchaseFinalized ? 'Purchase Complete' : 'Finalize Purchase'}
           </button>
-          {purchaseFinalized && <p>Thank you for your purchase!</p>}
         </div>
       )}
     </div>

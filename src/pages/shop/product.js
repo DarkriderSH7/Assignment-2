@@ -1,25 +1,43 @@
 import React, { useState } from 'react';
 
-export const Product = ({ data, addToCart }) => {
-  const { productName, price, productimage } = data;
+export const Product = ({ data }) => {
+  const { id: productId, productName, price, productimage } = data;
   const [quantity, setQuantity] = useState(1); // State to keep track of quantity
   const [addedToCart, setAddedToCart] = useState(false); // New state to track add to cart action
 
-  // Increment quantity
+  const addToCart = (productId, quantity) => {
+    const userId = 1; 
+
+    fetch('http://localhost/api/addtocart.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, productId, quantity })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.status === 'success') {
+        console.log('Item added to cart successfully');
+        setAddedToCart(true);
+        setTimeout(() => setAddedToCart(false), 2000); 
+      } else {
+        console.error('Failed to add item to cart');
+      }
+    })
+    .catch(error => console.error('Error adding item to cart:', error));
+  };
+
   const incrementQuantity = () => {
     setQuantity(quantity + 1);
   };
 
-  // Decrement quantity
   const decrementQuantity = () => {
-    setQuantity(quantity - 1 < 1 ? 1 : quantity - 1); // Ensure quantity does not go below 1
+    setQuantity(quantity - 1 < 1 ? 1 : quantity - 1);
   };
 
-  // Handle add to cart action
   const handleAddToCart = () => {
-    addToCart(data, quantity);
-    setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2000); // Reset addedToCart state after 2 seconds
+        addToCart(productId, quantity);
   };
 
   return (
@@ -27,20 +45,16 @@ export const Product = ({ data, addToCart }) => {
       <h2>{productName}</h2>
       <p>Price: ${price}</p>
       <img src={productimage} alt={productName} className="product-image" />
-      
-      {/* Move the quantity-selector div above the Add to Cart button */}
       <div className="quantity-selector">
         <button onClick={decrementQuantity}>-</button>
         <span>{quantity}</span>
         <button onClick={incrementQuantity}>+</button>
       </div>
 
-      {/* Add to Cart button */}
       <button onClick={handleAddToCart} disabled={addedToCart}>
         {addedToCart ? 'Added' : 'Add to Cart'}
       </button>
 
-      {/* Feedback message */}
       {addedToCart && <p>Added to cart!</p>}
     </div>
   );
